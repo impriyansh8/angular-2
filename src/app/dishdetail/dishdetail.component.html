@@ -30,15 +30,42 @@
       </md-card-actions> 
     </md-card>
   </div>
-  <div fxFlex="40" *ngIf="dish">
-    <md-list>
-      <h3 md-line>Comments</h3>
-      <md-list-item *ngFor="let comment of dish.comments">
-        <p md-line>{{comment.comment}}</p>
-        <p md-line>{{comment.rating}} star</p>
-        <p md-line>-- {{comment.author}} {{comment.date | date}}</p>
-      </md-list-item>
-    </md-list>
+  <div class="container" *ngIf="dish" fxLayout="column">
+    <div fxFlex="40">
+      <md-list>
+        <h3 md-line>Comments</h3>
+        <md-list-item *ngFor="let comment of dish.comments">
+          <p md-line>{{comment.comment}}</p>
+          <p md-line>{{comment.rating}} star</p>
+          <p md-line>-- {{comment.author}} {{comment.date | date}}</p>
+        </md-list-item>
+        <div [hidden]="commentForm.invalid">
+          <md-list-item>
+            <p md-line>{{ commentForm.value.comment }}</p>
+            <p md-line>{{ commentForm.value.rating }} star</p>
+            <p md-line>-- {{ commentForm.value.author }}</p>
+        </md-list-item>
+      </div>
+      </md-list>
+    </div>
+    <div fxFlex>
+      <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+        <md-input-container class="full-width" dividerColor="{{(formErrors.author) ? 'warn': 'primary'}}">
+          <input mdInput formControlName="author" placeholder="Name" type="text" required>
+          <md-hint>
+            <span [hidden]="!(formErrors.author)">{{formErrors.author}}</span>
+          </md-hint>
+        </md-input-container>
+        <md-slider formControlName="rating" min="1" max="5" step="1" value="5" thumbLabel tickInterval="1"></md-slider>
+        <md-input-container class="full-width" dividerColor="{{(formErrors.comment) ? 'warn': 'primary'}}">
+          <textarea mdInput formControlName="comment" placeholder="Comment" rows=12 required></textarea>
+          <md-hint>
+            <span [hidden]="!(formErrors.comment)">{{formErrors.comment}}</span>
+          </md-hint>
+        </md-input-container>
+        <button type="submit" md-button class="background-primary text-floral-white" [disabled]="commentForm.invalid">Submit</button>
+      </form>
+    </div>
   </div>
   <div [hidden]="dish">
     <md-spinner></md-spinner> <h4>Loading . . . Please Wait</h4>
