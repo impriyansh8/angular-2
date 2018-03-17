@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from '../animations/app.animation';
+import { flyInOut, expand } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
 
 @Component({
   selector: 'app-contact',
@@ -12,13 +13,15 @@ import { flyInOut } from '../animations/app.animation';
     'style': 'display: block'
   },
   animations: [
-    flyInOut()
+    flyInOut(),
+    expand()
   ]
 })
 export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup;
-  feedback: Feedback;
+  feedback: Feedback = null;
+  feedbackCopy = null;
   contactType= ContactType;
   formErrors={
     'firstname': '',
@@ -46,7 +49,7 @@ export class ContactComponent implements OnInit {
       'email': 'Email not in valid form.'
     }
   };
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: FormBuilder, private feedbackService: FeedbackService) { 
     this.createForm();
   }
 
@@ -67,17 +70,24 @@ export class ContactComponent implements OnInit {
     this.onValueChanged(); // (re)set validation messages now
   }
   onSubmit(){
-    this.feedback= this.feedbackForm.value;
-    console.log(this.feedback);
-    this.feedbackForm.reset({
-      firstname: '',
-      lastname: '',
-      telnum: '',
-      email: '',
-      agree: false,
-      contacttype: 'None',
-      message: ''
-    });
+    this.feedbackCopy= this.feedbackForm.value;
+    this.feedbackService.submitFeedback(this.feedbackCopy)
+      .subscribe(feedback => {
+        this.feedbackCopy = null;
+        this.feedback = feedback;
+        setTimeout(()=>{
+          this.feedback = null;
+          this.feedbackForm.reset({
+            firstname: '',
+            lastname: '',
+            telnum: '',
+            email: '',
+            agree: false,
+            contacttype: 'None',
+            message: ''
+          });
+        },5000);
+      });
   }
   onValueChanged(data?: any){
     if(!this.feedbackForm){ return; }

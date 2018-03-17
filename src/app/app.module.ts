@@ -22,6 +22,7 @@ import { HomeComponent } from './home/home.component';
 import { ContactComponent } from './contact/contact.component';
 import { PromotionService } from './services/promotion.service';
 import { LeaderService } from './services/leader.service';
+import { FeedbackService } from './services/feedback.service';
 import { LoginComponent } from './login/login.component';
 import { baseURL } from './shared/baseurl';
 import { ProcessHttpmsgService } from './process-httpmsg.service';
@@ -51,7 +52,7 @@ import { HighlightDirective } from './directives/highlight.directive';
     HttpModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
-  providers: [DishService, PromotionService, LeaderService, ProcessHttpmsgService,
+  providers: [DishService, PromotionService, LeaderService, ProcessHttpmsgService, FeedbackService,
     {provide: 'BaseURL', useValue: baseURL}
   ],
   entryComponents: [
